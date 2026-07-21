@@ -25,7 +25,7 @@ pipeline {
             steps {
                 bat '''
                 @echo off
-                for /f "tokens=5" %%a in ('netstat -ano ^| findstr /R /C:":1237 .*LISTENING") do (
+                for /f "tokens=5" %%a in ('netstat -ano ^| findstr /R /C:":1237 .*LISTENING"') do (
                     echo Stopping existing application /PID %%a...
                     taskkill /PID %%a /F
                 )
