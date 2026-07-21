@@ -53,6 +53,10 @@ public class UserController {
 		return ResponseEntity.ok(profile); 
 	}
 	
+	@GetMapping
+	public String hello() {
+		return "Hello from jenkins"; 
+	}
 	
 	@DeleteMapping("/{id}")
 	public void deleteUserById(@PathVariable int id) {
