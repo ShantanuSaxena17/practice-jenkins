@@ -21,6 +21,19 @@ pipeline {
             }
         }
 
+        stage('Stop Existing Application') {
+            steps {
+                bat '''
+                @echo off
+                for /f "tokens=5" %%a in ('netstat -ano ^| findstr /R /C:"1237 .*LISTENING") do (
+                    echo Stopping existing application...
+                    taskkill /PID %%a /F
+                )
+                exit /b 0
+                '''
+            }
+        }
+        
         stage('Compile') {
             steps {
                 bat 'mvn clean compile'
@@ -30,19 +43,6 @@ pipeline {
         stage('Package Application') {
             steps {
                 bat 'mvn package -DskipTests'
-            }
-        }
-
-        stage('Stop Existing Application') {
-            steps {
-                bat '''
-                @echo off
-                for /f "tokens=5" %%a in ('netstat -ano ^| findstr :1237') do (
-                    echo Stopping existing application...
-                    taskkill /PID %%a /F
-                )
-                exit /b 0
-                '''
             }
         }
 
@@ -56,7 +56,7 @@ pipeline {
 		        set JENKINS_NODE_COOKIE=dontKillMe
 		
 		        :: Start the Spring Boot application in the background
-		        start "" javaw -jar target\\spring_demo-0.0.1-SNAPSHOT.jar > app.log 2>&1
+		        start "spring_demo" /B cmd /c "java -jar target\\spring_demo-0.0.1-SNAPSHOT.jar > app.log 2>&1"
 		
 		        :: Wait for application startup
 		        ping 127.0.0.1 -n 11 > nul
@@ -79,5 +79,4 @@ pipeline {
         }
 
     }
-
 }
